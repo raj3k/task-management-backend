@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: .
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@db:5432/taskdb?schema=public
+      - JWT_SECRET=askdjnewjchbwejhbew
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ../task-management-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=taskdb

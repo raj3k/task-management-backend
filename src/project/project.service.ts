@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Project } from '@prisma/client';
 
@@ -9,9 +9,14 @@ export class ProjectService {
   async createProject(data: {
     name: string;
     description?: string;
+    userId: number;
   }): Promise<Project> {
     return this.prisma.project.create({
-      data,
+      data: {
+        name: data.name,
+        description: data.description,
+        userId: data.userId,
+      },
     });
   }
 
@@ -25,10 +30,16 @@ export class ProjectService {
     });
   }
 
+  async getProjectByUserId(userId: number) {
+    return this.prisma.project.findMany({
+      where: { userId: Number(userId) },
+    });
+  }
+
   async getTasksByProject(projectId: number) {
     const project = await this.prisma.project.findUnique({
       where: { id: Number(projectId) },
-      include: { tasks: true }, // Fetch tasks associated with the project
+      include: { tasks: true },
     });
 
     if (!project) {
